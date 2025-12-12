@@ -30,6 +30,7 @@ class Response(Base):
     canonical   : Mapped[str | None]        = mapped_column(sa.Text)
     redirect    : Mapped[str | None]        = mapped_column(sa.Text)
 
+
 class Link(Base):
     __tablename__ = 'links'
     link_id       : Mapped[int]               = mapped_column(sa.BigInteger, primary_key=True)
