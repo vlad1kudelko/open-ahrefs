@@ -10,6 +10,9 @@ class Settings(BaseSettings):
     DB_PASS: str
     DB_NAME: str
 
+    PGADMIN_EMAIL:    str
+    PGADMIN_PASSWORD: str
+
     model_config = SettingsConfigDict(
         env_file=find_dotenv(),
     )
