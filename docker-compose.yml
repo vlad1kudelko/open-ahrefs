@@ -11,7 +11,7 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready']
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
       interval: 1s
       timeout: 5s
       retries: 10
@@ -24,6 +24,12 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    healthcheck:
+      test: ["CMD", "wget", "-O", "-", "http://localhost:80/misc/ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 120s
 
   # =============== Kafka ===============
   zookeeper:
