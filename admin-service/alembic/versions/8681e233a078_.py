@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: e73fe2c19599
+Revision ID: 8681e233a078
 Revises: 
-Create Date: 2025-12-13 00:40:08.409533
+Create Date: 2025-12-13 22:33:54.703961
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'e73fe2c19599'
+revision: str = '8681e233a078'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -30,6 +30,7 @@ def upgrade() -> None:
     sa.Column('path', sa.Text(), nullable=True),
     sa.Column('param', sa.Text(), nullable=True),
     sa.Column('anchor', sa.Text(), nullable=True),
+    sa.CheckConstraint('port >= 0 AND port <= 65535'),
     sa.PrimaryKeyConstraint('url_id')
     )
     op.create_table('links',
@@ -54,6 +55,7 @@ def upgrade() -> None:
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('canonical', sa.Text(), nullable=True),
     sa.Column('redirect', sa.Text(), nullable=True),
+    sa.CheckConstraint('status_code >= 100 AND status_code < 600'),
     sa.ForeignKeyConstraint(['url_id'], ['urls.url_id'], ),
     sa.PrimaryKeyConstraint('response_id')
     )
