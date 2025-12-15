@@ -10,9 +10,10 @@ class Settings(BaseSettings):
     DB_USER: str
     DB_PASS: str
     DB_NAME: str
-
     PGADMIN_EMAIL: str
     PGADMIN_PASSWORD: str
+    KAFKA_HOST: str
+    KAFKA_PORT: str
 
     model_config = SettingsConfigDict(
         env_file=find_dotenv(),
@@ -31,6 +32,10 @@ class Settings(BaseSettings):
             f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}"
             f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
         )
+
+    @property
+    def kafka_url(self) -> str:
+        return f"${self.KAFKA_HOST}:${self.KAFKA_PORT}"
 
 
 @lru_cache

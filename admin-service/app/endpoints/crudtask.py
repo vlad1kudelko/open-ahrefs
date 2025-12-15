@@ -8,11 +8,11 @@ crudtask = APIRouter()
 
 
 @crudtask.get("/addurl")
-def api_addurl(domain: str):
+def api_addurl(domain: str) -> str:
     if not urlparse(domain).scheme:
-        return 1
+        return "ERROR scheme"
     if not urlparse(domain).netloc:
-        return 2
+        return "ERROR domain"
     with session_factory() as session:
         item_url = Url(
             scheme=urlparse(domain).scheme,
@@ -28,5 +28,5 @@ def api_addurl(domain: str):
             item_url.anchor = urlparse(domain).fragment
         session.add(item_url)
         # add kafka
-        #  session.commit()
-        session.flush()
+        session.commit()
+        return "OK"
