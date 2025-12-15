@@ -4,7 +4,7 @@ services:
     image: postgres
     restart: always
     ports:
-      - 5432:5432
+      - ${DB_PORT}:5432
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
@@ -51,7 +51,7 @@ services:
     image: 'confluentinc/cp-kafka:7.6.0'
     restart: always
     ports:
-      - 9092:29092
+      - ${KAFKA_PORT}:29092
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
