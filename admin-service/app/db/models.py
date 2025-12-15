@@ -1,7 +1,8 @@
-from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from typing import Annotated
 import datetime
+from typing import Annotated
+
 import sqlalchemy as sa
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 created_at = Annotated[
     datetime.datetime,

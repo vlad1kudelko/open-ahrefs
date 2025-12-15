@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from config.settings import settings
+from ..config.settings import settings
 
 engine = create_engine(
     url=settings.database_url_psycopg,
