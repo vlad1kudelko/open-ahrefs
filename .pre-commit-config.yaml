@@ -4,21 +4,26 @@ repos:
     hooks:
       - id: isort
         name: isort
-        args: ["--profile", "black", "app"]
+        args: ["--profile", "black"]
 
   - repo: https://github.com/psf/black
     rev: 26.1a1
     hooks:
       - id: black
         name: black
-        args: ["app"]
 
-  - repo: https://github.com/pylint-dev/pylint
-    rev: v4.0.3
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.3.0
     hooks:
-      - id: pylint
-        name: pylint
-        args: ["app"]
-        types: [python]
-        # Обратите внимание: Pylint может потребовать указания зависимостей вашего проекта, 
-        # если он не может их найти при запуске. Это делается через additional_dependencies.
+      - id: flake8
+        name: flake8
+
+  # - repo: https://github.com/pylint-dev/pylint
+    # rev: v4.0.3
+    # hooks:
+      # - id: pylint
+        # name: pylint
+        # args: ["app"]
+        # types: [python]
+        # # Обратите внимание: Pylint может потребовать указания зависимостей вашего проекта, 
+        # # если он не может их найти при запуске. Это делается через additional_dependencies.
