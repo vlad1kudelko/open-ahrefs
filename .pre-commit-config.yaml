@@ -18,12 +18,11 @@ repos:
       - id: flake8
         name: flake8
 
-  # - repo: https://github.com/pylint-dev/pylint
-    # rev: v4.0.3
-    # hooks:
-      # - id: pylint
-        # name: pylint
-        # args: ["app"]
+  - repo: https://github.com/pylint-dev/pylint
+    rev: v4.0.3
+    hooks:
+      - id: pylint
+        name: pylint
         # types: [python]
-        # # Обратите внимание: Pylint может потребовать указания зависимостей вашего проекта, 
-        # # если он не может их найти при запуске. Это делается через additional_dependencies.
+        # Обратите внимание: Pylint может потребовать указания зависимостей вашего проекта, 
+        # если он не может их найти при запуске. Это делается через additional_dependencies.
