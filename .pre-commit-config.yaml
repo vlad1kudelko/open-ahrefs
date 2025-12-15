@@ -1,0 +1,24 @@
+repos:
+  - repo: https://github.com/PyCQA/isort
+    rev: 7.0.0
+    hooks:
+      - id: isort
+        name: isort
+        args: ["--profile", "black", "app"]
+
+  - repo: https://github.com/psf/black
+    rev: 26.1a1
+    hooks:
+      - id: black
+        name: black
+        args: ["app"]
+
+  - repo: https://github.com/pylint-dev/pylint
+    rev: v4.0.3
+    hooks:
+      - id: pylint
+        name: pylint
+        args: ["app"]
+        types: [python]
+        # Обратите внимание: Pylint может потребовать указания зависимостей вашего проекта, 
+        # если он не может их найти при запуске. Это делается через additional_dependencies.
