@@ -1,4 +1,4 @@
-from urllib.parse import urlparse
+from urllib.parse import ParseResult, urlparse
 
 from app.db.engine import session_factory
 from app.db.models import Url
@@ -8,25 +8,34 @@ crudtask = APIRouter()
 
 
 @crudtask.get("/addurl")
-def api_addurl(domain: str) -> str:
-    if not urlparse(domain).scheme:
+def api_addurl(url: str) -> str:
+    parse_url: ParseResult = urlparse(url)
+    if not parse_url.scheme:
         return "ERROR scheme"
-    if not urlparse(domain).netloc:
+    if not parse_url.netloc:
         return "ERROR domain"
+    host: str = parse_url.netloc
+    port: str | None = None
+    if ":" in parse_url.netloc:
+        host, port = parse_url.netloc.split(":")
+    item_url = Url(scheme=parse_url.scheme, domain=host)
+    item_url.port = int(port) if port else None
+    item_url.path = parse_url.path or item_url.path
+    item_url.param = parse_url.query or item_url.param
+    item_url.anchor = parse_url.fragment or item_url.anchor
     with session_factory() as session:
-        item_url = Url(
-            scheme=urlparse(domain).scheme,
-            domain=urlparse(domain).netloc.split(":")[0],
+        count: int = (
+            session.query(Url)
+            .filter(Url.scheme == item_url.scheme)
+            .filter(Url.domain == item_url.domain)
+            .filter(Url.port == item_url.port)
+            .filter(Url.path == item_url.path)
+            .filter(Url.param == item_url.param)
+            .filter(Url.anchor == item_url.anchor)
+            .count()
         )
-        if len(urlparse(domain).netloc.split(":")) == 2:
-            item_url.port = int(urlparse(domain).netloc.split(":")[1])
-        if urlparse(domain).path:
-            item_url.path = urlparse(domain).path
-        if urlparse(domain).query:
-            item_url.param = urlparse(domain).query
-        if urlparse(domain).fragment:
-            item_url.anchor = urlparse(domain).fragment
+        if count > 0:
+            return "ERROR idempotence"
         session.add(item_url)
-        # add kafka
         session.commit()
         return "OK"
