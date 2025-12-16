@@ -1,0 +1,8 @@
+services:
+  admin-service:
+    build:
+      context: .
+      dockerfile: admin-service/Dockerfile
+    restart: always
+    ports:
+      - 8000:8000
