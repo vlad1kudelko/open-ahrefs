@@ -246,6 +246,9 @@ groups = ["main"]
 files = []
 develop = true
 
+[package.dependencies]
+pydantic = ">=2.12.5,<3.0.0"
+
 [package.source]
 type = "directory"
 url = "../common_schemas"

@@ -2,6 +2,7 @@
 name = "admin-service"
 version = "0.1.0"
 description = ""
+package-mode = false
 authors = [
     "Vlad Kudelko <vlad1kudelko@gmail.com>"
 ]

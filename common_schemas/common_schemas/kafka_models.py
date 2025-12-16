@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class Url(BaseModel):
-    _id: int
+    url_id: int
     url: str
 
 
@@ -20,4 +20,4 @@ class Res(BaseModel):
     description: str | None
     canonical: str | None
     redirect: str | None
-    links: [Link]
+    links: list[Link]
