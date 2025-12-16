@@ -1,12 +1,20 @@
-#  import uvicorn
 import asyncio
+from contextlib import asynccontextmanager
 
-from background.task import pipe_push
+import uvicorn
+from background.task import pipe_push_while
 from endpoints.crudtask import crudtask
 from fastapi import FastAPI
 
-app = FastAPI()
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    task = asyncio.create_task(pipe_push_while())
+    yield
+    task.cancel()
+
+
+app = FastAPI(lifespan=lifespan)
 app.include_router(crudtask, prefix="/crudtask")
 
 
@@ -16,5 +24,4 @@ def index():
 
 
 if __name__ == "__main__":
-    asyncio.run(pipe_push())
-    #  uvicorn.run("main:app", host="127.0.0.1", reload=True)
+    uvicorn.run("main:app")
