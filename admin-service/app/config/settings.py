@@ -35,7 +35,7 @@ class Settings(BaseSettings):
 
     @property
     def kafka_url(self) -> str:
-        return f"${self.KAFKA_HOST}:${self.KAFKA_PORT}"
+        return f"{self.KAFKA_HOST}:{self.KAFKA_PORT}"
 
 
 @lru_cache
