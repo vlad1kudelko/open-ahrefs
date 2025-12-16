@@ -26,6 +26,7 @@ class Url(Base):
     path       : Mapped[str | None] = mapped_column(sa.Text)
     param      : Mapped[str | None] = mapped_column(sa.Text)
     anchor     : Mapped[str | None] = mapped_column(sa.Text)
+    pars_count : Mapped[int | None] = mapped_column(sa.Integer)
     # fmt: on
 
 
