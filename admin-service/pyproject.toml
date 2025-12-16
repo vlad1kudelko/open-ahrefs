@@ -1,29 +1,36 @@
-[project]
+[tool.poetry]
 name = "admin-service"
 version = "0.1.0"
 description = ""
 authors = [
-    {name = "Your Name",email = "you@example.com"}
+    "Vlad Kudelko <vlad1kudelko@gmail.com>"
 ]
 readme = "README.md"
-requires-python = ">=3.12"
-dependencies = [
-    "alembic (>=1.17.2,<2.0.0)",
-    "asyncpg (>=0.31.0,<0.32.0)",
-    "psycopg (>=3.3.2,<4.0.0)",
-    "psycopg-binary (>=3.3.2,<4.0.0)",
-    "sqlalchemy (>=2.0.45,<3.0.0)",
-    "fastapi (>=0.124.2,<0.125.0)",
-    "pydantic (>=2.12.5,<3.0.0)",
-    "pydantic-settings (>=2.12.0,<3.0.0)",
-    "uvicorn (>=0.38.0,<0.39.0)",
-    "black (>=25.12.0,<26.0.0)",
-    "pylint (>=4.0.4,<5.0.0)",
-    "isort (>=7.0.0,<8.0.0)",
-    "pre-commit (>=4.5.0,<5.0.0)",
-    "flake8 (>=7.3.0,<8.0.0)",
-    "confluent-kafka (>=2.12.2,<3.0.0)",
-]
+
+
+[tool.poetry.dependencies]
+python = ">=3.12"
+
+alembic = ">=1.17.2,<2.0.0"
+asyncpg = ">=0.31.0,<0.32.0"
+psycopg = ">=3.3.2,<4.0.0"
+psycopg-binary = ">=3.3.2,<4.0.0"
+sqlalchemy = ">=2.0.45,<3.0.0"
+fastapi = ">=0.124.2,<0.125.0"
+pydantic = ">=2.12.5,<3.0.0"
+pydantic-settings = ">=2.12.0,<3.0.0"
+uvicorn = ">=0.38.0,<0.39.0"
+confluent-kafka = ">=2.12.2,<3.0.0"
+
+common_schemas = {path = "../common_schemas", develop = true}
+
+
+[tool.poetry.group.dev.dependencies]
+black = ">=25.12.0,<26.0.0"
+pylint = ">=4.0.4,<5.0.0"
+isort = ">=7.0.0,<8.0.0"
+pre-commit = ">=4.5.0,<5.0.0"
+flake8 = ">=7.3.0,<8.0.0"
 
 
 [build-system]
