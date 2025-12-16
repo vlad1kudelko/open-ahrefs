@@ -1,16 +1,22 @@
-[project]
+[tool.poetry]
 name = "scraper-service"
 version = "0.1.0"
 description = ""
+package-mode = false
 authors = [
-    {name = "Your Name",email = "you@example.com"}
+    "Vlad Kudelko <vlad1kudelko@gmail.com>"
 ]
 readme = "README.md"
-requires-python = ">=3.12"
-dependencies = [
-    "confluent-kafka (>=2.12.2,<3.0.0)",
-    "pydantic (>=2.12.5,<3.0.0)"
-]
+
+
+[tool.poetry.dependencies]
+python = ">=3.12"
+
+pydantic = ">=2.12.5,<3.0.0"
+aiokafka = "^0.12.0"
+requests = "^2.32.5"
+
+common_schemas = {path = "../common_schemas", develop = true}
 
 
 [build-system]
