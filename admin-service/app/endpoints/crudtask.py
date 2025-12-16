@@ -1,7 +1,7 @@
 from urllib.parse import ParseResult, urlparse
 
-from app.db.engine import session_factory
-from app.db.models import Url
+from db.engine import session_factory
+from db.models import Url
 from fastapi import APIRouter
 
 crudtask = APIRouter()
