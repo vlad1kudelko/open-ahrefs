@@ -1,8 +1,9 @@
 import asyncio
 
-#  import requests
+import aiohttp
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from config.settings import settings
+from tools.scraper import scraper_200
 
 from common_schemas import kafka_models
 
@@ -12,18 +13,43 @@ async def main():
     consumer = AIOKafkaConsumer(
         "topic_url",
         bootstrap_servers=settings.KAFKA_URL,
-        group_id="topic_url__group_001",
+        group_id="topic_url__group_009",
         auto_offset_reset="earliest",
     )
     await producer.start()
     await consumer.start()
-    try:
-        async for msg in consumer:
-            data = kafka_models.Url.model_validate_json(msg.value)
-            print(data)
-    finally:
-        await producer.stop()
-        await consumer.stop()
+    async with aiohttp.ClientSession() as session:
+        try:
+            async for msg in consumer:
+                kafka_url: kafka_models.Url = kafka_models.Url.model_validate_json(
+                    msg.value
+                )
+                my_headers: dict = {
+                    "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
+                }
+                async with session.get(
+                    kafka_url.url, cookies={}, headers=my_headers, allow_redirects=False
+                ) as resp:
+                    kafka_res: kafka_models.Res | None = None
+                    if 200 <= resp.status < 300:
+                        kafka_res = await scraper_200(kafka_url.url_id, resp)
+                    if 300 <= resp.status < 400:
+                        kafka_res = kafka_models.Res(
+                            url_id=kafka_url.url_id,
+                            status_code=resp.status,
+                            content_type=resp.headers.get("content-type", ""),
+                            redirect=resp.headers["Location"],
+                        )
+                    if kafka_res is None:
+                        kafka_res = kafka_models.Res(
+                            url_id=kafka_url.url_id,
+                            status_code=resp.status,
+                            content_type=resp.headers.get("content-type", ""),
+                        )
+                    print(kafka_res)
+        finally:
+            await producer.stop()
+            await consumer.stop()
 
 
 if __name__ == "__main__":

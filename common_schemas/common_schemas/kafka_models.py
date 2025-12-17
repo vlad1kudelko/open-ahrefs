@@ -8,16 +8,18 @@ class Url(BaseModel):
 
 class Link(BaseModel):
     tag: str
-    attr: str | None
+    attr: str | None = None
     field: str
+    follow: bool = True
 
 
 class Res(BaseModel):
     url_id: int
     status_code: int
-    h1: str | None
-    title: str | None
-    description: str | None
-    canonical: str | None
-    redirect: str | None
-    links: list[Link]
+    content_type: str
+    h1: str | None = None
+    title: str | None = None
+    description: str | None = None
+    canonical: str | None = None
+    redirect: str | None = None
+    links: list[Link] | None = None
