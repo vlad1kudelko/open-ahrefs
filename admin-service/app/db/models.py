@@ -55,3 +55,4 @@ class Link(Base):
     tag: Mapped[str] = mapped_column(sa.String(16))
     attr: Mapped[str | None] = mapped_column(sa.String(16))
     field: Mapped[str] = mapped_column(sa.Text)
+    follow: Mapped[bool] = mapped_column(sa.Boolean)
