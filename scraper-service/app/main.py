@@ -4,7 +4,7 @@ import asyncio
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 from config.settings import settings
 
-#  from common_schemas import kafka_models
+from common_schemas import kafka_models
 
 
 async def main():
@@ -12,26 +12,15 @@ async def main():
     consumer = AIOKafkaConsumer(
         "topic_url",
         bootstrap_servers=settings.KAFKA_URL,
-        group_id="topic_url__group",
+        group_id="topic_url__group_001",
         auto_offset_reset="earliest",
     )
     await producer.start()
     await consumer.start()
     try:
         async for msg in consumer:
-
-            print(
-                "{}:{:d}:{:d}: key={} value={} timestamp_ms={}".format(
-                    msg.topic,
-                    msg.partition,
-                    msg.offset,
-                    msg.key,
-                    msg.value,
-                    msg.timestamp,
-                )
-            )
-
-            pass
+            data = kafka_models.Url.model_validate_json(msg.value)
+            print(data)
     finally:
         await producer.stop()
         await consumer.stop()
