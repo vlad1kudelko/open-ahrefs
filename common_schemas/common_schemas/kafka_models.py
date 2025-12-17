@@ -10,6 +10,7 @@ class Link(BaseModel):
     tag: str
     attr: str | None = None
     field: str
+    full_url: str
     follow: bool = True
 
 
