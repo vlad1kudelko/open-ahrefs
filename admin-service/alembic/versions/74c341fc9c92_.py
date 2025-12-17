@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 8681e233a078
+Revision ID: 74c341fc9c92
 Revises:
-Create Date: 2025-12-13 22:33:54.703961
+Create Date: 2025-12-17 18:23:31.579191
 
 """
 
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "8681e233a078"
+revision: str = "74c341fc9c92"
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -36,6 +36,7 @@ def upgrade() -> None:
         sa.Column("path", sa.Text(), nullable=True),
         sa.Column("param", sa.Text(), nullable=True),
         sa.Column("anchor", sa.Text(), nullable=True),
+        sa.Column("last_pars", sa.DateTime(), nullable=True),
         sa.CheckConstraint("port >= 0 AND port <= 65535"),
         sa.PrimaryKeyConstraint("url_id"),
     )
@@ -53,6 +54,7 @@ def upgrade() -> None:
         sa.Column("tag", sa.String(length=16), nullable=False),
         sa.Column("attr", sa.String(length=16), nullable=True),
         sa.Column("field", sa.Text(), nullable=False),
+        sa.Column("follow", sa.Boolean(), nullable=False),
         sa.ForeignKeyConstraint(
             ["source_url_id"],
             ["urls.url_id"],
@@ -74,6 +76,7 @@ def upgrade() -> None:
         ),
         sa.Column("url_id", sa.BigInteger(), nullable=False),
         sa.Column("status_code", sa.Integer(), nullable=False),
+        sa.Column("content_type", sa.String(length=256), nullable=False),
         sa.Column("h1", sa.Text(), nullable=True),
         sa.Column("title", sa.Text(), nullable=True),
         sa.Column("description", sa.Text(), nullable=True),
