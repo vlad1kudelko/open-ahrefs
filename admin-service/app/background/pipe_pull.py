@@ -5,7 +5,7 @@ from urllib.parse import ParseResult, urlparse
 
 from aiokafka import AIOKafkaConsumer
 from config.settings import settings
-from db.engine import session_factory  # TODO работа с базой должна быть асинхронной
+from db.engine import async_session_factory
 from db.models import Link, Response
 from tools.find_add_url import find_add_url
 
@@ -26,7 +26,7 @@ async def pipe_pull_while():
                 kafka_res: kafka_models.Res = kafka_models.Res.model_validate_json(
                     msg.value
                 )
-                with session_factory() as session:
+                async with async_session_factory() as session:
                     print(datetime.datetime.now())
                     db_res = Response(
                         url_id=kafka_res.url_id,
@@ -46,7 +46,7 @@ async def pipe_pull_while():
                                 continue
                             if not parse_url.hostname:
                                 continue
-                            db_url, _ = find_add_url(session, parse_url)
+                            db_url, _ = await find_add_url(session, parse_url)
                             db_link = Link(
                                 source_url_id=kafka_res.url_id,
                                 target_url_id=db_url.url_id,
@@ -56,9 +56,9 @@ async def pipe_pull_while():
                                 follow=item_link.follow,
                             )
                             session.add(db_link)
-                    session.commit()
+                    await session.commit()
         finally:
             await consumer.stop()
     except Exception as e:
-        print(f"CRITICAL ERROR in background task: {e}")
+        print(f"CRITICAL ERROR in background pull task: {e}")
         os.kill(os.getpid(), signal.SIGINT)
