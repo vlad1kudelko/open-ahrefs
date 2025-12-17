@@ -13,13 +13,14 @@ async def main():
     consumer = AIOKafkaConsumer(
         "topic_url",
         bootstrap_servers=settings.KAFKA_URL,
-        group_id="topic_url__group_009",
+        group_id="topic_url__group_011",
         auto_offset_reset="earliest",
     )
     await producer.start()
     await consumer.start()
     async with aiohttp.ClientSession() as session:
         try:
+            tasks: list[asyncio.Future] = []
             async for msg in consumer:
                 kafka_url: kafka_models.Url = kafka_models.Url.model_validate_json(
                     msg.value
@@ -46,7 +47,11 @@ async def main():
                             status_code=resp.status,
                             content_type=resp.headers.get("content-type", ""),
                         )
-                    print(kafka_res)
+                    message = kafka_res.model_dump_json().encode("utf-8")
+                    task = await producer.send("topic_res", message)
+                    tasks.append(task)
+            if tasks:
+                await asyncio.gather(*tasks)
         finally:
             await producer.stop()
             await consumer.stop()
