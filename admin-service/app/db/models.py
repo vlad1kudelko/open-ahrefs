@@ -16,7 +16,9 @@ class Base(DeclarativeBase):
 
 class Url(Base):
     __tablename__ = "urls"
-    __table_args__ = (sa.CheckConstraint("port >= 0 AND port <= 65535"),)
+    __table_args__ = (
+        sa.CheckConstraint("port >= 0 AND port <= 65535", name="ck_url_port"),
+    )
     url_id: Mapped[int] = mapped_column(sa.BigInteger, primary_key=True)
     created_at: Mapped[created_at]
     scheme: Mapped[str] = mapped_column(sa.String(16))
@@ -30,7 +32,12 @@ class Url(Base):
 
 class Response(Base):
     __tablename__ = "responses"
-    __table_args__ = (sa.CheckConstraint("status_code >= 100 AND status_code < 600"),)
+    __table_args__ = (
+        sa.CheckConstraint(
+            "status_code >= 100 AND status_code < 600 OR status_code = 999",
+            name="ck_response_status_code",
+        ),
+    )
     response_id: Mapped[int] = mapped_column(sa.BigInteger, primary_key=True)
     created_at: Mapped[created_at]
     url_id: Mapped[int] = mapped_column(sa.BigInteger, sa.ForeignKey("urls.url_id"))

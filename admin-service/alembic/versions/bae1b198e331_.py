@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 74c341fc9c92
+Revision ID: bae1b198e331
 Revises:
-Create Date: 2025-12-17 18:23:31.579191
+Create Date: 2025-12-17 21:31:29.627224
 
 """
 
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "74c341fc9c92"
+revision: str = "bae1b198e331"
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -37,7 +37,7 @@ def upgrade() -> None:
         sa.Column("param", sa.Text(), nullable=True),
         sa.Column("anchor", sa.Text(), nullable=True),
         sa.Column("last_pars", sa.DateTime(), nullable=True),
-        sa.CheckConstraint("port >= 0 AND port <= 65535"),
+        sa.CheckConstraint("port >= 0 AND port <= 65535", name="ck_url_port"),
         sa.PrimaryKeyConstraint("url_id"),
     )
     op.create_table(
@@ -82,7 +82,10 @@ def upgrade() -> None:
         sa.Column("description", sa.Text(), nullable=True),
         sa.Column("canonical", sa.Text(), nullable=True),
         sa.Column("redirect", sa.Text(), nullable=True),
-        sa.CheckConstraint("status_code >= 100 AND status_code < 600"),
+        sa.CheckConstraint(
+            "status_code >= 100 AND status_code < 600 OR status_code = 999",
+            name="ck_response_status_code",
+        ),
         sa.ForeignKeyConstraint(
             ["url_id"],
             ["urls.url_id"],

@@ -2,6 +2,7 @@ import asyncio
 from contextlib import asynccontextmanager
 
 import uvicorn
+from background.pipe_pull import pipe_pull_while
 from background.pipe_push import pipe_push_while
 from endpoints.crudtask import crudtask
 from fastapi import FastAPI
@@ -9,9 +10,11 @@ from fastapi import FastAPI
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    task = asyncio.create_task(pipe_push_while())
+    task_push = asyncio.create_task(pipe_push_while())
+    task_pull = asyncio.create_task(pipe_pull_while())
     yield
-    task.cancel()
+    task_push.cancel()
+    task_pull.cancel()
 
 
 app = FastAPI(lifespan=lifespan)
