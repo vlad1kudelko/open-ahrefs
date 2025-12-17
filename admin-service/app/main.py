@@ -2,7 +2,7 @@ import asyncio
 from contextlib import asynccontextmanager
 
 import uvicorn
-from background.task import pipe_push_while
+from background.pipe_push import pipe_push_while
 from endpoints.crudtask import crudtask
 from fastapi import FastAPI
 
