@@ -15,8 +15,11 @@ python = ">=3.12"
 aiokafka = "^0.12.0"
 requests = "^2.32.5"
 pydantic-settings = "^2.12.0"
+aiohttp = {extras = ["speedups"], version = "^3.13.2"}
 
 common_schemas = {path = "../common_schemas", develop = true}
+beautifulsoup4 = "^4.14.3"
+lxml = "^6.0.2"
 
 
 [build-system]
