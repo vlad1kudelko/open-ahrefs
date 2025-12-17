@@ -1,15 +1,14 @@
 import os
 import signal
+from urllib.parse import ParseResult, urlparse
 
 from aiokafka import AIOKafkaConsumer
 from config.settings import settings
+from db.engine import session_factory  # TODO работа с базой должна быть асинхронной
+from db.models import Link, Response
+from tools.find_add_url import find_add_url
 
-#  from db.engine import session_factory  # TODO работа с базой должна быть асинхронной
-#  from common_schemas import kafka_models
-#  from db.models import Link, Response, Url
-
-
-#  async def pipe_pull():
+from common_schemas import kafka_models
 
 
 async def pipe_pull_while():
@@ -22,13 +21,40 @@ async def pipe_pull_while():
         )
         await consumer.start()
         try:
-            #  async for msg in consumer:
-            #  kafka_res: kafka_models.Res = kafka_models.Res.model_validate_json(
-            #  msg.value
-            #  )
-            #  with session_factory() as session:
-            #  pass
-            pass
+            async for msg in consumer:
+                kafka_res: kafka_models.Res = kafka_models.Res.model_validate_json(
+                    msg.value
+                )
+                with session_factory() as session:
+                    db_res = Response(
+                        url_id=kafka_res.url_id,
+                        status_code=kafka_res.status_code,
+                        content_type=kafka_res.content_type,
+                        h1=kafka_res.h1,
+                        title=kafka_res.title,
+                        description=kafka_res.description,
+                        canonical=kafka_res.canonical,
+                        redirect=kafka_res.redirect,
+                    )
+                    session.add(db_res)
+                    if kafka_res.links:
+                        for item_link in kafka_res.links:
+                            parse_url: ParseResult = urlparse(item_link.full_url)
+                            if parse_url.scheme not in ["http", "https"]:
+                                continue
+                            if not parse_url.hostname:
+                                continue
+                            db_url, _ = find_add_url(session, parse_url)
+                            db_link = Link(
+                                source_url_id=kafka_res.url_id,
+                                target_url_id=db_url.url_id,
+                                tag=item_link.tag,
+                                attr=item_link.attr,
+                                field=item_link.field,
+                                follow=item_link.follow,
+                            )
+                            session.add(db_link)
+                    session.commit()
         finally:
             await consumer.stop()
     except Exception as e:
