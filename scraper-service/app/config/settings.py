@@ -5,23 +5,11 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    DB_HOST: str
-    DB_PORT: str
-    DB_USER: str
-    DB_PASS: str
-    DB_NAME: str
-    PGADMIN_EMAIL: str
-    PGADMIN_PASSWORD: str
-    KAFKA_HOST: str
-    KAFKA_PORT: str
+    KAFKA_URL: str
 
     model_config = SettingsConfigDict(
         env_file=find_dotenv(),
     )
-
-    @property
-    def kafka_url(self) -> str:
-        return f"{self.KAFKA_HOST}:{self.KAFKA_PORT}"
 
 
 @lru_cache

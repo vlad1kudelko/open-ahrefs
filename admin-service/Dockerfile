@@ -16,6 +16,6 @@ COPY common_schemas /home/common_schemas
 RUN poetry install --no-interaction --no-ansi
 
 COPY admin-service/app app
-COPY .env .
+COPY admin-service/.env .
 
 ENTRYPOINT ["python", "app/main.py"]

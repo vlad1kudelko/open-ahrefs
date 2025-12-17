@@ -40,7 +40,7 @@ async def pipe_push(producer: AIOKafkaProducer):
 
 async def pipe_push_while():
     try:
-        producer = AIOKafkaProducer(bootstrap_servers=settings.kafka_url)
+        producer = AIOKafkaProducer(bootstrap_servers=settings.KAFKA_URL)
         await producer.start()
         try:
             while True:
