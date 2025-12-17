@@ -35,6 +35,7 @@ class Response(Base):
     created_at: Mapped[created_at]
     url_id: Mapped[int] = mapped_column(sa.BigInteger, sa.ForeignKey("urls.url_id"))
     status_code: Mapped[int] = mapped_column(sa.Integer)
+    content_type: Mapped[str] = mapped_column(sa.String(256))
     h1: Mapped[str | None] = mapped_column(sa.Text)
     title: Mapped[str | None] = mapped_column(sa.Text)
     description: Mapped[str | None] = mapped_column(sa.Text)
