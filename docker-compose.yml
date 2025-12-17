@@ -65,6 +65,8 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_DEFAULT_REPLICATION_FACTOR: 1
+      # Количество партиций по умолчанию для новых топиков
+      KAFKA_NUM_PARTITIONS: 10
     depends_on:
       - zookeeper
     healthcheck:

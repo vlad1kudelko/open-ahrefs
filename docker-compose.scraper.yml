@@ -1,0 +1,18 @@
+services:
+  scraper-service-1:
+    build:
+      context: .
+      dockerfile: scraper-service/Dockerfile
+    restart: always
+
+  scraper-service-2:
+    build:
+      context: .
+      dockerfile: scraper-service/Dockerfile
+    restart: always
+
+  scraper-service-3:
+    build:
+      context: .
+      dockerfile: scraper-service/Dockerfile
+    restart: always
