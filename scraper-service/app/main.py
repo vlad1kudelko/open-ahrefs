@@ -1,4 +1,5 @@
 import asyncio
+import datetime
 
 import aiohttp
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
@@ -18,34 +19,46 @@ async def main():
     )
     await producer.start()
     await consumer.start()
-    async with aiohttp.ClientSession() as session:
+    timeout = aiohttp.ClientTimeout(total=30, connect=10, sock_read=10)
+    async with aiohttp.ClientSession(timeout=timeout) as session:
         try:
             async for msg in consumer:
+                print(datetime.datetime.now())
                 kafka_url: kafka_models.Url = kafka_models.Url.model_validate_json(
                     msg.value
                 )
                 my_headers: dict = {
                     "User-Agent": "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"
                 }
-                async with session.get(
-                    kafka_url.url, cookies={}, headers=my_headers, allow_redirects=False
-                ) as resp:
-                    kafka_res: kafka_models.Res | None = None
-                    if 200 <= resp.status < 300:
-                        kafka_res = await scraper_200(kafka_url.url_id, resp)
-                    if 300 <= resp.status < 400:
-                        kafka_res = kafka_models.Res(
-                            url_id=kafka_url.url_id,
-                            status_code=resp.status,
-                            content_type=resp.headers.get("content-type", ""),
-                            redirect=resp.headers["Location"],
-                        )
-                    if kafka_res is None:
-                        kafka_res = kafka_models.Res(
-                            url_id=kafka_url.url_id,
-                            status_code=resp.status,
-                            content_type=resp.headers.get("content-type", ""),
-                        )
+                kafka_res: kafka_models.Res | None = None
+                try:
+                    async with session.get(
+                        kafka_url.url,
+                        cookies={},
+                        headers=my_headers,
+                        allow_redirects=False,
+                    ) as resp:
+                        if 200 <= resp.status < 300:
+                            kafka_res = await scraper_200(kafka_url.url_id, resp)
+                        if 300 <= resp.status < 400:
+                            kafka_res = kafka_models.Res(
+                                url_id=kafka_url.url_id,
+                                status_code=resp.status,
+                                content_type=resp.headers.get("content-type", ""),
+                                redirect=resp.headers["Location"],
+                            )
+                        if kafka_res is None:
+                            kafka_res = kafka_models.Res(
+                                url_id=kafka_url.url_id,
+                                status_code=resp.status,
+                                content_type=resp.headers.get("content-type", ""),
+                            )
+                        message = kafka_res.model_dump_json().encode("utf-8")
+                        await producer.send_and_wait("topic_res", message)
+                except Exception:
+                    kafka_res = kafka_models.Res(
+                        url_id=kafka_url.url_id, status_code=999, content_type=""
+                    )
                     message = kafka_res.model_dump_json().encode("utf-8")
                     await producer.send_and_wait("topic_res", message)
         finally:
