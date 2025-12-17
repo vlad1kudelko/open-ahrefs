@@ -4,6 +4,9 @@ from bs4 import BeautifulSoup
 from common_schemas import kafka_models
 
 
+# TODO добавить парсинг sitemap
+# TODO добавить проход по другим сущностям (по картинкам, стилям, и т.д.)
+# TODO добавить проход по iframe и подобным ссылкам (нетипичным)
 async def scraper_html(url_id: int, resp: aiohttp.ClientResponse) -> kafka_models.Res:
     html = await resp.text()
     soup = BeautifulSoup(html, "lxml")
