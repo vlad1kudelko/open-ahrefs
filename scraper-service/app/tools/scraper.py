@@ -43,7 +43,7 @@ async def scraper_html(url_id: int, resp: aiohttp.ClientResponse) -> kafka_model
                     tag="a",
                     attr="href",
                     field=raw_url.strip(),
-                    full_url=urljoin(resp.url, raw_url.strip()),
+                    full_url=urljoin(str(resp.url), raw_url.strip()),
                     follow=follow,
                 )
             )
