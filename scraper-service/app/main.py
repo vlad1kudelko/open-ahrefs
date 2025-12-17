@@ -2,17 +2,16 @@ import asyncio
 
 #  import requests
 from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
-
-#  from config.settings import settings
+from config.settings import settings
 
 #  from common_schemas import kafka_models
 
 
 async def main():
-    producer = AIOKafkaProducer(bootstrap_servers="localhost:9092")
+    producer = AIOKafkaProducer(bootstrap_servers=settings.KAFKA_URL)
     consumer = AIOKafkaConsumer(
         "topic_url",
-        bootstrap_servers="localhost:9092",
+        bootstrap_servers=settings.KAFKA_URL,
         group_id="topic_url__group",
         auto_offset_reset="earliest",
     )

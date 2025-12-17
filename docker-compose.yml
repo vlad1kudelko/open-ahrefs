@@ -4,7 +4,7 @@ services:
     image: postgres
     restart: always
     ports:
-      - ${DB_PORT}:5432
+      - 5432:5432
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASS}
@@ -23,8 +23,8 @@ services:
     ports:
       - 8081:80
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+      PGADMIN_DEFAULT_EMAIL: "example@example.com"
+      PGADMIN_DEFAULT_PASSWORD: "example"
     healthcheck:
       test: ["CMD", "wget", "-O", "-", "http://localhost:80/misc/ping"]
       interval: 10s
@@ -51,7 +51,7 @@ services:
     image: 'confluentinc/cp-kafka:7.6.0'
     restart: always
     ports:
-      - ${KAFKA_PORT}:29092
+      - 9092:29092
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
