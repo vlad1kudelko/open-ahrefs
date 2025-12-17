@@ -1,3 +1,4 @@
+import datetime
 import os
 import signal
 from urllib.parse import ParseResult, urlparse
@@ -26,6 +27,7 @@ async def pipe_pull_while():
                     msg.value
                 )
                 with session_factory() as session:
+                    print(datetime.datetime.now())
                     db_res = Response(
                         url_id=kafka_res.url_id,
                         status_code=kafka_res.status_code,

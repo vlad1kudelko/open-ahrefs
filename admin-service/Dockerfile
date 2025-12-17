@@ -18,4 +18,4 @@ RUN poetry install --no-interaction --no-ansi
 COPY admin-service/app app
 COPY admin-service/.env .
 
-ENTRYPOINT ["python", "app/main.py"]
+ENTRYPOINT ["python", "-u", "app/main.py"]
