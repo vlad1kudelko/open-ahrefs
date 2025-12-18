@@ -31,7 +31,9 @@ async def pipe_push(producer: AIOKafkaProducer):
         stmt = select(Url).where(Url.last_pars.is_(None)).limit(100)
         result = await session.execute(stmt)
         for item in result.scalars():
-            kafka_item = kafka_models.Url(url_id=item.url_id, url=compile_domain(item))
+            kafka_item = kafka_models.Url(
+                url_hash=item.url_hash, url=compile_domain(item)
+            )
             message = kafka_item.model_dump_json().encode("utf-8")
             task = await producer.send("topic_url", message)
             tasks.append(task)

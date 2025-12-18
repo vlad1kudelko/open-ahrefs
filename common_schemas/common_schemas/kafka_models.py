@@ -2,7 +2,7 @@ from pydantic import BaseModel
 
 
 class Url(BaseModel):
-    url_id: int
+    url_hash: str
     url: str
 
 
@@ -15,7 +15,7 @@ class Link(BaseModel):
 
 
 class Res(BaseModel):
-    url_id: int
+    url_hash: str
     status_code: int
     content_type: str
     h1: str | None = None
