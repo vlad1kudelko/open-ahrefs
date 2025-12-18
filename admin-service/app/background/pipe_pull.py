@@ -65,6 +65,7 @@ async def pipe_pull(consumer: AIOKafkaConsumer):
                 url for url in list_urls if url.url_hash not in exist_hashes
             ]
             session.add_all(new_urls)
+            await session.flush()
             # и остальные данные пачками
             session.add(db_res)
             session.add_all(list_links)
@@ -76,7 +77,7 @@ async def pipe_pull_while():
         consumer = AIOKafkaConsumer(
             "topic_res",
             bootstrap_servers=settings.KAFKA_URL,
-            group_id="topic_res__group_001",
+            group_id="topic_res__group_003",
             auto_offset_reset="earliest",
         )
         await consumer.start()
