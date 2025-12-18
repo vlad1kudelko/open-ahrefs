@@ -6,8 +6,8 @@ from aiokafka import AIOKafkaConsumer
 from config.settings import settings, topicbalance
 from db.engine import async_session_factory
 from db.models import Link, Response, Url
-from sqlalchemy import select
-from tools.url_to_obj import url_to_obj
+from sqlalchemy.dialects.postgresql import insert
+from tools.url_to_obj import obj_to_list_dict, url_to_obj
 
 from common_schemas import kafka_models
 
@@ -56,17 +56,14 @@ async def pipe_pull(consumer: AIOKafkaConsumer):
                             follow=item_link.follow,
                         )
                     )
-            # ищем url-ы, которых еще нет в базе, и добавляем пачкой
-            all_hashes: list[str] = [url.url_hash for url in list_urls]
-            stmt = select(Url.url_hash).where(Url.url_hash.in_(all_hashes))
-            result = await session.execute(stmt)
-            exist_hashes = result.scalars().all()
-            new_urls: list[Url] = [
-                url for url in list_urls if url.url_hash not in exist_hashes
-            ]
-            session.add_all(new_urls)
-            await session.flush()
-            # и остальные данные пачками
+            list_urls_dict = obj_to_list_dict(list_urls)
+            if list_urls_dict:
+                insert_stmt = insert(Url).values(list_urls_dict)
+                upsert_stmt = insert_stmt.on_conflict_do_nothing(
+                    index_elements=["url_hash"]
+                )
+                await session.execute(upsert_stmt)
+                await session.flush()
             session.add(db_res)
             session.add_all(list_links)
             await session.commit()
