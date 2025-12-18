@@ -4,5 +4,3 @@ services:
       context: .
       dockerfile: scraper-service/Dockerfile
     restart: always
-    deploy:
-      replicas: 50
