@@ -9,7 +9,7 @@ from common_schemas import kafka_models
 # TODO добавить парсинг sitemap
 # TODO добавить проход по другим сущностям (по картинкам, стилям, и т.д.)
 # TODO добавить проход по iframe и подобным ссылкам (нетипичным)
-async def scraper_html(url_id: int, resp: aiohttp.ClientResponse) -> kafka_models.Res:
+async def scraper_html(url_hash: str, resp: aiohttp.ClientResponse) -> kafka_models.Res:
     html = await resp.text()
     soup = BeautifulSoup(html, "lxml")
     h1 = getattr(soup.find("h1"), "text", "").strip()
@@ -49,7 +49,7 @@ async def scraper_html(url_id: int, resp: aiohttp.ClientResponse) -> kafka_model
             )
     # END links
     return kafka_models.Res(
-        url_id=url_id,
+        url_hash=url_hash,
         status_code=resp.status,
         content_type=resp.headers.get("content-type", ""),
         h1=h1,
@@ -60,12 +60,12 @@ async def scraper_html(url_id: int, resp: aiohttp.ClientResponse) -> kafka_model
     )
 
 
-async def scraper_200(url_id: int, resp: aiohttp.ClientResponse) -> kafka_models.Res:
+async def scraper_200(url_hash: str, resp: aiohttp.ClientResponse) -> kafka_models.Res:
     if resp.headers.get("content-type", "").split(";")[0] == "text/html":
-        return await scraper_html(url_id, resp)
+        return await scraper_html(url_hash, resp)
     # else
     return kafka_models.Res(
-        url_id=url_id,
+        url_hash=url_hash,
         status_code=resp.status,
         content_type=resp.headers.get("content-type", ""),
     )
