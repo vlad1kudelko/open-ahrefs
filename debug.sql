@@ -2,6 +2,10 @@ SELECT * FROM urls;
 SELECT * FROM responses;
 SELECT * FROM links;
 
+SELECT * FROM urls WHERE url_id = 58606;
+SELECT * FROM responses WHERE url_id = 60024;
+SELECT * FROM links WHERE source_url_id = 58606;
+
 -- общая статистика по таблицам
 SELECT * FROM
 (SELECT COUNT(*) as urls FROM urls) CROSS JOIN
