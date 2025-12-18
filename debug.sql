@@ -31,5 +31,5 @@ ORDER BY count DESC;
 
 -- количество ссылок, которые отправлены в kafka, но еще не спаршены
 SELECT COUNT(*) FROM urls LEFT JOIN responses USING(url_id)
-WHERE urls.last_pars is NULL AND responses.url_id is NULL;
+WHERE urls.last_pars IS NOT NULL AND responses.url_id IS NULL;
 --
