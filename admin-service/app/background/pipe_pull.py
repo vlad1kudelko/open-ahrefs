@@ -4,7 +4,7 @@ import signal
 from urllib.parse import ParseResult, urlparse
 
 from aiokafka import AIOKafkaConsumer
-from config.settings import settings
+from config.settings import settings, topicbalance
 from db.engine import async_session_factory
 from db.models import Link, Response
 from tools.find_add_url import find_add_url
@@ -23,6 +23,16 @@ async def pipe_pull_while():
         await consumer.start()
         try:
             async for msg in consumer:
+                # BEGIN - topicbalance
+                partitions = consumer.assignment()
+                if partitions:
+                    end_offsets = await consumer.end_offsets(partitions)
+                    total_lag = 0
+                    for tp in partitions:
+                        pos = await consumer.position(tp)
+                        total_lag += end_offsets[tp] - pos
+                    topicbalance.set(total_lag)
+                # END
                 kafka_res: kafka_models.Res = kafka_models.Res.model_validate_json(
                     msg.value
                 )

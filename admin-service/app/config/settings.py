@@ -37,3 +37,24 @@ def get_settings() -> Settings:
 
 
 settings = get_settings()
+
+
+class Topicbalance:
+    """
+    насколько kafka опережает pipe_pull
+    для обратной связи с pipe_push
+    pipe_push (быстрый) -> kafka -> pipe_pull (медленный)
+    """
+
+    count: int = 0
+
+    def can_push(self) -> bool:
+        ret: bool = self.count < 500
+        print("can_push", ret, self.count)
+        return ret
+
+    def set(self, new):
+        self.count = new
+
+
+topicbalance = Topicbalance()
