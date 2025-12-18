@@ -19,7 +19,7 @@ class Url(Base):
     __table_args__ = (
         sa.CheckConstraint("port >= 0 AND port <= 65535", name="ck_url_port"),
     )
-    url_id: Mapped[int] = mapped_column(sa.BigInteger, primary_key=True)
+    url_hash: Mapped[str] = mapped_column(sa.String(64), primary_key=True)
     created_at: Mapped[created_at]
     scheme: Mapped[str] = mapped_column(sa.String(16))
     domain: Mapped[str] = mapped_column(sa.String(256))
@@ -28,7 +28,6 @@ class Url(Base):
     param: Mapped[str | None] = mapped_column(sa.Text)
     anchor: Mapped[str | None] = mapped_column(sa.Text)
     last_pars: Mapped[datetime | None] = mapped_column(sa.DateTime)
-    url_hash: Mapped[str] = mapped_column(sa.String(64), index=True)
 
 
 class Response(Base):
@@ -41,7 +40,7 @@ class Response(Base):
     )
     response_id: Mapped[int] = mapped_column(sa.BigInteger, primary_key=True)
     created_at: Mapped[created_at]
-    url_id: Mapped[int] = mapped_column(sa.BigInteger, sa.ForeignKey("urls.url_id"))
+    url_hash: Mapped[str] = mapped_column(sa.String(64), sa.ForeignKey("urls.url_hash"))
     status_code: Mapped[int] = mapped_column(sa.Integer)
     content_type: Mapped[str] = mapped_column(sa.String(256))
     h1: Mapped[str | None] = mapped_column(sa.Text)
@@ -55,11 +54,11 @@ class Link(Base):
     __tablename__ = "links"
     link_id: Mapped[int] = mapped_column(sa.BigInteger, primary_key=True)
     created_at: Mapped[created_at]
-    source_url_id: Mapped[int] = mapped_column(
-        sa.BigInteger, sa.ForeignKey("urls.url_id")
+    source_url_hash: Mapped[str] = mapped_column(
+        sa.String(64), sa.ForeignKey("urls.url_hash")
     )
-    target_url_id: Mapped[int] = mapped_column(
-        sa.BigInteger, sa.ForeignKey("urls.url_id")
+    target_url_hash: Mapped[str] = mapped_column(
+        sa.String(64), sa.ForeignKey("urls.url_hash")
     )
     tag: Mapped[str] = mapped_column(sa.String(16))
     attr: Mapped[str | None] = mapped_column(sa.String(16))
