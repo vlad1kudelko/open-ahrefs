@@ -28,6 +28,7 @@ class Url(Base):
     param: Mapped[str | None] = mapped_column(sa.Text)
     anchor: Mapped[str | None] = mapped_column(sa.Text)
     last_pars: Mapped[datetime | None] = mapped_column(sa.DateTime)
+    url_hash: Mapped[str] = mapped_column(sa.String(64), index=True)
 
 
 class Response(Base):
