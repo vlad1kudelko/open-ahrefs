@@ -1,22 +1,24 @@
-from urllib.parse import ParseResult, urlparse
-
 from db.engine import async_session_factory
+from db.models import Url
 from fastapi import APIRouter
-from tools.find_add_url import find_add_url
+from sqlalchemy import select
+from tools.url_to_obj import url_to_obj
 
 crudtask = APIRouter()
 
 
 @crudtask.get("/addurl")
 async def api_addurl(url: str) -> str:
-    parse_url: ParseResult = urlparse(url)
-    if parse_url.scheme not in ["http", "https"]:
-        return "ERROR scheme"
-    if not parse_url.hostname:
-        return "ERROR domain"
+    obj_url: Url | None = url_to_obj(url)
+    if obj_url is None:
+        return "ERROR parse"
     async with async_session_factory() as session:
-        _, isNew = await find_add_url(session, parse_url)
-        if not isNew:
+        stmt = select(Url).where(Url.url_hash == obj_url.url_hash)
+        result = await session.execute(stmt)
+        old_url: Url | None = result.scalar_one_or_none()
+        if old_url:
             return "ERROR idempotence"
-        await session.commit()
-        return "OK"
+        else:
+            session.add(obj_url)
+            await session.commit()
+            return "OK"
