@@ -4,7 +4,7 @@ import signal
 from datetime import datetime, timezone
 
 from aiokafka import AIOKafkaProducer
-from config.settings import settings
+from config.settings import settings, topicbalance
 from db.engine import async_session_factory
 from db.models import Url
 from sqlalchemy import select
@@ -47,7 +47,8 @@ async def pipe_push_while():
         await producer.start()
         try:
             while True:
-                await pipe_push(producer)
+                if topicbalance.can_push():
+                    await pipe_push(producer)
                 await asyncio.sleep(10)
         finally:
             await producer.stop()
