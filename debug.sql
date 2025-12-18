@@ -2,19 +2,29 @@ SELECT * FROM urls;
 SELECT * FROM responses;
 SELECT * FROM links;
 
+-- общая статистика по таблицам
 SELECT * FROM
 (SELECT COUNT(*) as urls FROM urls) CROSS JOIN
 (SELECT COUNT(*) as resp FROM responses) CROSS JOIN
 (SELECT COUNT(*) as links FROM links);
+--
 
-SELECT domain, path, COUNT(*) as c
-FROM urls JOIN links on urls.url_id = links.target_url_id
+-- рейтинг ссылок по количеству входящих
+SELECT domain, path, COUNT(*) FROM urls JOIN links on urls.url_id = links.target_url_id
+WHERE domain not in ('github.com')
 GROUP BY domain, path
-ORDER BY c DESC;
+ORDER BY count DESC;
+--
 
---UPDATE urls SET last_pars = NULL WHERE scheme = 'https';
+-- все домены (и количество ссылок с ними)
+SELECT domain, COUNT(*) FROM urls
+GROUP BY domain
+ORDER BY count DESC;
+--
 
-SELECT domain, COUNT(*) FROM urls GROUP BY domain ORDER BY count DESC;
-
-CREATE INDEX ix_url_full_address 
-ON urls (scheme, domain, port, path, param, anchor);
+-- недоступные домены с количеством запросов к ним
+SELECT domain, COUNT(*) FROM urls JOIN responses USING(url_id)
+WHERE status_code = 999
+GROUP BY domain
+ORDER BY count DESC;
+--

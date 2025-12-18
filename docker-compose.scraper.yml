@@ -5,4 +5,4 @@ services:
       dockerfile: scraper-service/Dockerfile
     restart: always
     deploy:
-      replicas: 10
+      replicas: 20
