@@ -39,17 +39,17 @@ async def main():
                         allow_redirects=False,
                     ) as resp:
                         if 200 <= resp.status < 300:
-                            kafka_res = await scraper_200(kafka_url.url_id, resp)
+                            kafka_res = await scraper_200(kafka_url.url_hash, resp)
                         if 300 <= resp.status < 400:
                             kafka_res = kafka_models.Res(
-                                url_id=kafka_url.url_id,
+                                url_hash=kafka_url.url_hash,
                                 status_code=resp.status,
                                 content_type=resp.headers.get("content-type", ""),
                                 redirect=resp.headers["Location"],
                             )
                         if kafka_res is None:
                             kafka_res = kafka_models.Res(
-                                url_id=kafka_url.url_id,
+                                url_hash=kafka_url.url_hash,
                                 status_code=resp.status,
                                 content_type=resp.headers.get("content-type", ""),
                             )
@@ -57,7 +57,7 @@ async def main():
                         await producer.send_and_wait("topic_res", message)
                 except Exception:
                     kafka_res = kafka_models.Res(
-                        url_id=kafka_url.url_id, status_code=999, content_type=""
+                        url_hash=kafka_url.url_hash, status_code=999, content_type=""
                     )
                     message = kafka_res.model_dump_json().encode("utf-8")
                     await producer.send_and_wait("topic_res", message)
