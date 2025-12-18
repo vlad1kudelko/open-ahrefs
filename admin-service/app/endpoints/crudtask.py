@@ -15,7 +15,7 @@ async def api_addurl(url: str) -> str:
     if not parse_url.hostname:
         return "ERROR domain"
     async with async_session_factory() as session:
-        _, isNew = find_add_url(session, parse_url)
+        _, isNew = await find_add_url(session, parse_url)
         if not isNew:
             return "ERROR idempotence"
         await session.commit()
