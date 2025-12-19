@@ -22,11 +22,15 @@ class Url(Base):
     url_hash: Mapped[str] = mapped_column(sa.String(64), primary_key=True)
     created_at: Mapped[created_at]
     scheme: Mapped[str] = mapped_column(sa.String(16))
-    domain: Mapped[str] = mapped_column(sa.String(256))
+    username: Mapped[str | None] = mapped_column(sa.Text)
+    password: Mapped[str | None] = mapped_column(sa.Text)
+    hostname: Mapped[str] = mapped_column(sa.String(256))
     port: Mapped[int | None] = mapped_column(sa.Integer)
     path: Mapped[str | None] = mapped_column(sa.Text)
-    param: Mapped[str | None] = mapped_column(sa.Text)
-    anchor: Mapped[str | None] = mapped_column(sa.Text)
+    params: Mapped[str | None] = mapped_column(sa.Text)
+    query: Mapped[str | None] = mapped_column(sa.Text)
+    fragment: Mapped[str | None] = mapped_column(sa.Text)
+    full_url: Mapped[str] = mapped_column(sa.Text)
     last_pars: Mapped[datetime | None] = mapped_column(sa.DateTime)
 
 

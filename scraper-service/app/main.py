@@ -55,7 +55,7 @@ async def main():
     consumer = AIOKafkaConsumer(
         "topic_url",
         bootstrap_servers=settings.KAFKA_URL,
-        group_id="topic_url__group_012",
+        group_id="scraper__group_001",
         auto_offset_reset="earliest",
     )
     await producer.start()

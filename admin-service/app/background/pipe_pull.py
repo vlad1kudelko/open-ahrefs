@@ -7,7 +7,7 @@ from config.settings import settings
 from db.engine import async_session_factory
 from db.models import Link, Response, Url
 from sqlalchemy.dialects.postgresql import insert
-from tools.url_to_obj import obj_to_list_dict, url_to_obj
+from tools.url_to_obj import obj_to_dict, url_to_obj
 
 from common_schemas import kafka_models
 
@@ -46,7 +46,7 @@ async def pipe_pull(consumer: AIOKafkaConsumer):
                             follow=item_link.follow,
                         )
                     )
-            list_urls_dict = obj_to_list_dict(list_urls)
+            list_urls_dict = obj_to_dict(list_urls)
             if list_urls_dict:
                 insert_stmt = insert(Url).values(list_urls_dict)
                 upsert_stmt = insert_stmt.on_conflict_do_nothing(
@@ -64,7 +64,7 @@ async def pipe_pull_while():
         consumer = AIOKafkaConsumer(
             "topic_res",
             bootstrap_servers=settings.KAFKA_URL,
-            group_id="topic_res__group_003",
+            group_id="pipe_pull__group_001",
             auto_offset_reset="earliest",
         )
         await consumer.start()
