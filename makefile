@@ -9,6 +9,21 @@ logs_admin:
 
 restart_admin: stop_admin start_admin logs_admin
 
+#--------------------------------------------------------------------
+
+stop_grafana:
+	docker compose -f docker-compose.grafana.yml down
+
+start_grafana:
+	docker compose -f docker-compose.grafana.yml up --build -d
+
+logs_grafana:
+	docker compose -f docker-compose.grafana.yml logs -f
+
+restart_grafana: stop_grafana start_grafana logs_grafana
+
+#--------------------------------------------------------------------
+
 stop_scraper:
 	docker compose -f docker-compose.scraper.yml down
 
