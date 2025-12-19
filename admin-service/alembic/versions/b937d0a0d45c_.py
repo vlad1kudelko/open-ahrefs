@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: efeeb019d649
+Revision ID: b937d0a0d45c
 Revises:
-Create Date: 2025-12-18 19:20:22.695448
+Create Date: 2025-12-19 11:10:05.924104
 
 """
 
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "efeeb019d649"
+revision: str = "b937d0a0d45c"
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -31,11 +31,15 @@ def upgrade() -> None:
             nullable=False,
         ),
         sa.Column("scheme", sa.String(length=16), nullable=False),
-        sa.Column("domain", sa.String(length=256), nullable=False),
+        sa.Column("username", sa.Text(), nullable=True),
+        sa.Column("password", sa.Text(), nullable=True),
+        sa.Column("hostname", sa.String(length=256), nullable=False),
         sa.Column("port", sa.Integer(), nullable=True),
         sa.Column("path", sa.Text(), nullable=True),
-        sa.Column("param", sa.Text(), nullable=True),
-        sa.Column("anchor", sa.Text(), nullable=True),
+        sa.Column("params", sa.Text(), nullable=True),
+        sa.Column("query", sa.Text(), nullable=True),
+        sa.Column("fragment", sa.Text(), nullable=True),
+        sa.Column("full_url", sa.Text(), nullable=False),
         sa.Column("last_pars", sa.DateTime(), nullable=True),
         sa.CheckConstraint("port >= 0 AND port <= 65535", name="ck_url_port"),
         sa.PrimaryKeyConstraint("url_hash"),
