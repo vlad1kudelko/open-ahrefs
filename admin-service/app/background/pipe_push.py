@@ -40,7 +40,7 @@ async def pipe_push_while():
             while True:
                 print(datetime.now(), "pipe_push")
                 await pipe_push(producer)
-                await asyncio.sleep(10)
+                await asyncio.sleep(100)
         finally:
             await producer.stop()
     except Exception as e:
