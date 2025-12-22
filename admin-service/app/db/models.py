@@ -68,3 +68,8 @@ class Link(Base):
     attr: Mapped[str | None] = mapped_column(sa.String(16))
     field: Mapped[str] = mapped_column(sa.Text)
     follow: Mapped[bool] = mapped_column(sa.Boolean)
+
+
+class Domain(Base):
+    __tablename__ = "domains"
+    domain: Mapped[str] = mapped_column(sa.String(256), primary_key=True)

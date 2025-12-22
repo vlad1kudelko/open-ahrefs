@@ -6,8 +6,8 @@ from datetime import datetime, timezone
 from aiokafka import AIOKafkaProducer
 from config.settings import settings
 from db.engine import async_session_factory
-from db.models import Url
-from sqlalchemy import select
+from db.models import Domain, Url
+from sqlalchemy import exists, select
 
 from common_schemas import kafka_models
 
@@ -19,7 +19,14 @@ async def pipe_push(producer: AIOKafkaProducer):
         # TODO потом переписать на сложный "хотя бы один парсинг за последние Х дней"
         # но с сохранением идемпотентности
         # TODO еще тут нужна проверка на то, сколько сейчас в очереди висит урлов
-        stmt = select(Url).where(Url.last_pars.is_(None)).limit(100)
+        stmt = (
+            select(Url)
+            .where(
+                Url.last_pars.is_(None),
+                exists().where(Domain.domain == Url.hostname),
+            )
+            .limit(100)
+        )
         result = await session.execute(stmt)
         for item in result.scalars():
             kafka_item = kafka_models.Url(url_hash=item.url_hash, url=item.full_url)
