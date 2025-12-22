@@ -1,6 +1,7 @@
 services:
   promtail:
     image: grafana/promtail:latest
+    restart: always
     ports:
       - "9080:9080"
     volumes:
@@ -12,6 +13,7 @@ services:
 
   loki:
     image: grafana/loki:latest
+    restart: always
     ports:
       - "3100:3100"
     volumes:
@@ -19,6 +21,7 @@ services:
 
   postgres-exporter:
     image: quay.io/prometheuscommunity/postgres-exporter
+    restart: always
     ports:
       - 9187:9187
     environment:
@@ -27,13 +30,15 @@ services:
       DATA_SOURCE_PASS: ${DB_PASS}
 
   kafka-exporter:
-      image: danielqsj/kafka-exporter 
-      command: ["--kafka.server=kafka:9092"]
-      ports:
-        - 9308:9308
+    image: danielqsj/kafka-exporter 
+    restart: always
+    command: ["--kafka.server=kafka:9092"]
+    ports:
+      - 9308:9308
 
   prometheus:
     image: prom/prometheus:latest
+    restart: always
     ports:
       - "9090:9090"
     volumes:
@@ -42,6 +47,7 @@ services:
 
   grafana:
     image: grafana/grafana:latest
+    restart: always
     ports:
       - "3000:3000"
     environment:
