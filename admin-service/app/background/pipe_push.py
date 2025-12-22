@@ -8,12 +8,14 @@ from config.settings import settings
 from db.engine import async_session_factory
 from db.models import Domain, Url
 from sqlalchemy import exists, select
+from tools.custom_grafana import metrics_counter
 
 from common_schemas import kafka_models
 
 
 async def pipe_push(producer: AIOKafkaProducer):
     async with async_session_factory() as session:
+        metrics_counter.labels(group="push", status="iter").inc()
         tasks: list[asyncio.Future] = []
         # сейчас простой запрос на "хотя бы один парсинг"
         # TODO потом переписать на сложный "хотя бы один парсинг за последние Х дней"
@@ -45,7 +47,6 @@ async def pipe_push_while():
         await producer.start()
         try:
             while True:
-                print(datetime.now(), "pipe_push")
                 await pipe_push(producer)
                 await asyncio.sleep(10)
         finally:
