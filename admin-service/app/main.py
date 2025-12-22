@@ -6,6 +6,7 @@ from background.pipe_pull import pipe_pull_while
 from background.pipe_push import pipe_push_while
 from endpoints.crudtask import crudtask
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 
 
 @asynccontextmanager
@@ -19,6 +20,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(crudtask, prefix="/crudtask")
+Instrumentator().instrument(app).expose(app)
 
 
 @app.get("/")
