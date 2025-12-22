@@ -1,4 +1,3 @@
-import datetime
 import os
 import signal
 
@@ -7,6 +6,7 @@ from config.settings import settings
 from db.engine import async_session_factory
 from db.models import Link, Response, Url
 from sqlalchemy.dialects.postgresql import insert
+from tools.custom_grafana import metrics_counter
 from tools.url_to_obj import obj_to_dict, url_to_obj
 
 from common_schemas import kafka_models
@@ -16,7 +16,7 @@ async def pipe_pull(consumer: AIOKafkaConsumer):
     async for msg in consumer:
         kafka_res: kafka_models.Res = kafka_models.Res.model_validate_json(msg.value)
         async with async_session_factory() as session:
-            print(datetime.datetime.now())
+            metrics_counter.labels(group="pull", status="iter").inc()
             db_res = Response(
                 url_hash=kafka_res.url_hash,
                 status_code=kafka_res.status_code,
