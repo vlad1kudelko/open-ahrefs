@@ -59,6 +59,10 @@ make stop_grafana
 - **PgAdmin**: `http://localhost:8081`
 - **Grafana**: `http://localhost:3000`
 
+Интерактивная документация API доступна по адресу `http://localhost:8000/docs`:
+
+![FastAPI Documentation](imgs/fastapi-docs.png)
+
 ## ☸️ Установка в Kubernetes
 
 Для развертывания в Kubernetes кластере используйте Helm charts.
@@ -171,3 +175,11 @@ alembic upgrade head
 - Метрики Kafka
 - Логи через Loki
 - Кастомные дашборды в Grafana
+
+### Метрики запросов
+
+![Grafana Requests](imgs/grafana-requests.png)
+
+### Метрики задержек Kafka
+
+![Grafana Lag](imgs/grafana-lag.png)
