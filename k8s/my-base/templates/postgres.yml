@@ -1,0 +1,16 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgres
+spec:
+  instances: 3
+
+  bootstrap:
+    initdb:
+      database: {{ .Values.DB_NAME }}
+      owner: {{ .Values.DB_USER }}
+      secret:
+        name: 'secret-cnpg'
+
+  storage:
+    size: 100Gi

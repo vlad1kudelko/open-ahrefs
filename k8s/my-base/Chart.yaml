@@ -1,0 +1,5 @@
+apiVersion: v2
+name: my-base
+description: PostgreSQL и Kafka
+version: 0.1.0
+type: application
